@@ -13,6 +13,19 @@ const createAgentService = async (data) => {
   });
 };
 
+const readAgentsService = async () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const allAgents = await Agents.find({}).sort({
+        updatedAt: -1,
+      });
+      resolve(allAgents);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
 const updateAgentService = async (query, data) => {
   return new Promise(async (resolve, reject) => {
     Agent.findOneAndUpdate(
@@ -31,4 +44,18 @@ const updateAgentService = async (query, data) => {
   });
 };
 
-module.exports = { createAgentService, updateAgentService };
+const deleteAgentService = async (query) => {
+  return new Promise(async (resolve, reject) => {
+    Agent.deleteOne(query, (err) => {
+      if (err) reject({ success: false, err });
+      resolve({ success: true });
+    });
+  });
+};
+
+module.exports = {
+  createAgentService,
+  updateAgentService,
+  deleteAgentService,
+  readAgentsService,
+};
