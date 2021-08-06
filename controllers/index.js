@@ -94,8 +94,8 @@ const exportAgents = async (req, res) => {
 const importAgents = (req, res) => {
   console.log(req.filename);
   importExcelData(path.join(__dirname, "..", "/uploads/") + req.file.filename);
-  res.json({
-    msg: "File uploaded/import successfully!",
+  res.status(200).json({
+    msg: "File import successfull!",
     file: req.file,
   });
 };
@@ -128,7 +128,7 @@ function importExcelData(filePath) {
   });
 
   Agent.insertMany(excelData.Customers, (err, res) => {
-    if (err) res.status(400).json({ success: dalse });
+    if (err) res.status(400).json({ success: false });
     res.status(200).json({ success: true });
   });
 
