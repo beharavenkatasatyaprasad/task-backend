@@ -8,7 +8,8 @@ const {
 } = require("../services");
 const excel = require("exceljs");
 const moment = require("moment");
-const path = require("path")
+const path = require("path");
+const excelToJson = require("convert-excel-to-json");
 
 const createAgent = (req, res) => {
   const {
@@ -72,7 +73,7 @@ const exportAgents = async (req, res) => {
     { header: "gender", key: "gender", width: 30 },
     { header: "status", key: "status", width: 30 },
     { header: "email", key: "email", width: 30 },
-    { header: "mbl", key: "mbl", width: 30 },
+    { header: "mobile", key: "mbl", width: 30 },
   ];
 
   worksheet.addRows(allAgents);
@@ -89,6 +90,50 @@ const exportAgents = async (req, res) => {
       console.log(err);
     });
 };
+
+const importAgents = (req, res) => {
+  console.log(req.filename);
+  importExcelData(path.join(__dirname, "..", "/uploads/") + req.file.filename);
+  res.json({
+    msg: "File uploaded/import successfully!",
+    file: req.file,
+  });
+};
+
+function importExcelData(filePath) {
+  const excelData = excelToJson({
+    sourceFile: filePath,
+    sheets: [
+      {
+        name: "Agents",
+
+        header: {
+          rows: 1,
+        },
+
+        columnToKey: {
+          A: "_id",
+          B: "name",
+          C: "age",
+          D: "experience",
+          E: "description",
+          F: "qualification",
+          G: "gender",
+          H: "status",
+          I: "email",
+          J: "mbl",
+        },
+      },
+    ],
+  });
+
+  Agent.insertMany(excelData.Customers, (err, res) => {
+    if (err) res.status(400).json({ success: dalse });
+    res.status(200).json({ success: true });
+  });
+
+  fs.unlinkSync(filePath);
+}
 
 const getAgentDetails = (req, res) => {
   readAgentDetailsService({ _id: req.params.agentId })
@@ -134,4 +179,5 @@ module.exports = {
   getAgents,
   getAgentDetails,
   exportAgents,
+  importAgents,
 };
