@@ -6,7 +6,7 @@ router.post("/createAgent", createAgent);
 
 router.get("/getAgents", getAgents);
 
-router.get("/getAgentDetails", getAgentDetails);
+router.get("/getAgentDetails/:agentId", getAgentDetails);
 
 router.put("/updateAgent/:agentId", updateAgent);
 

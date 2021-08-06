@@ -52,20 +52,9 @@ const getAgents = (req, res) => {
       console.log(err);
     });
 };
-readAgentDetailsService;
-const getAgents = (req, res) => {
-  readAgentsService()
-    .then((r) => {
-      res.status(200).json(r);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-      console.log(err);
-    });
-};
 
 const getAgentDetails = (req, res) => {
-  readAgentDetailsService({ _id: req.params._id })
+  readAgentDetailsService({ _id: req.params.agentId })
     .then((r) => {
       res.status(200).json(r);
     })
