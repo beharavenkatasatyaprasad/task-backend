@@ -4,7 +4,7 @@ const createAgentService = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       const agentInstance = new Agent(data);
-      await agentInstance.save().save((res) => {
+      agentInstance.save((err, res) => {
         resolve(res);
       });
     } catch (err) {
@@ -16,10 +16,21 @@ const createAgentService = async (data) => {
 const readAgentsService = async () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const allAgents = await Agents.find({}).sort({
+      const allAgents = await Agent.find({}).sort({
         updatedAt: -1,
       });
       resolve(allAgents);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+const readAgentDetailsService = async (query) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const MrAgent = await Agent.findOne(query);
+      resolve(MrAgent);
     } catch (err) {
       reject(err);
     }
@@ -58,4 +69,5 @@ module.exports = {
   updateAgentService,
   deleteAgentService,
   readAgentsService,
+  readAgentDetailsService,
 };

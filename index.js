@@ -3,7 +3,8 @@ const express = require("express"),
   mongoose = require("mongoose"),
   cors = require("cors"),
   morgan = require("morgan"),
-  parser = require("body-parser");
+  parser = require("body-parser"),
+  routes = require("./routes");
 
 app.use(express.json());
 app.use(parser.urlencoded({ extended: false }));
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
   res.send({ message: "No cookie for you" });
 });
 
+app.use("/api-v1", routes);
 mongoose
   .connect(process.env.DB_URL, {
     useNewUrlParser: true,
