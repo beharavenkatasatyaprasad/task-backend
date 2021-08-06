@@ -1,3 +1,4 @@
+const Agent = require("../models/agents");
 const {
   createAgentService,
   updateAgentService,
@@ -5,6 +6,9 @@ const {
   readAgentsService,
   readAgentDetailsService,
 } = require("../services");
+const excel = require("exceljs");
+const moment = require("moment");
+const path = require("path")
 
 const createAgent = (req, res) => {
   const {
@@ -15,7 +19,6 @@ const createAgent = (req, res) => {
     age,
     gender,
     status,
-    picture,
     email,
     mbl,
   } = req.body;
@@ -27,7 +30,6 @@ const createAgent = (req, res) => {
     age,
     gender,
     status,
-    picture,
     email,
     mbl,
   };
@@ -49,6 +51,41 @@ const getAgents = (req, res) => {
     })
     .catch((err) => {
       res.status(400).json(err);
+      console.log(err);
+    });
+};
+
+const exportAgents = async (req, res) => {
+  const allAgents = await Agent.find({}).sort({
+    updatedAt: -1,
+  });
+  let workbook = new excel.Workbook();
+  let worksheet = workbook.addWorksheet("Agents");
+
+  worksheet.columns = [
+    { header: "Id", key: "_id", width: 10 },
+    { header: "Name", key: "name", width: 30 },
+    { header: "Age", key: "age", width: 10, outlineLevel: 1 },
+    { header: "Experience", key: "experience", width: 30 },
+    { header: "description", key: "description", width: 60 },
+    { header: "qualification", key: "qualification", width: 30 },
+    { header: "gender", key: "gender", width: 30 },
+    { header: "status", key: "status", width: 30 },
+    { header: "email", key: "email", width: 30 },
+    { header: "mbl", key: "mbl", width: 30 },
+  ];
+
+  worksheet.addRows(allAgents);
+
+  const filename = `agents-${moment().format("MMM-Do-YY")}.xlsx`;
+
+  workbook.xlsx
+    .writeFile(filename)
+    .then((response) => {
+      console.log(path.join(__dirname, `../${filename}`));
+      res.sendFile(path.join(__dirname, `../${filename}`));
+    })
+    .catch((err) => {
       console.log(err);
     });
 };
@@ -96,4 +133,5 @@ module.exports = {
   deleteAgent,
   getAgents,
   getAgentDetails,
+  exportAgents,
 };

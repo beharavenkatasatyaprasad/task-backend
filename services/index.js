@@ -37,6 +37,7 @@ const readAgentDetailsService = async (query) => {
   });
 };
 
+
 const updateAgentService = async (query, data) => {
   return new Promise(async (resolve, reject) => {
     Agent.findOneAndUpdate(

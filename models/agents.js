@@ -24,9 +24,6 @@ const agentSchema = new Schema(
     status: {
       type: "string",
     },
-    picture: {
-      type: "string",
-    },
     email: {
       type: "string",
     },
