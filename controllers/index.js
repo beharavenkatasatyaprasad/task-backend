@@ -9,6 +9,7 @@ const {
 const excel = require("exceljs");
 const moment = require("moment");
 const path = require("path");
+const fs = require("fs");
 const excelToJson = require("convert-excel-to-json");
 
 const createAgent = (req, res) => {
@@ -78,7 +79,7 @@ const exportAgents = async (req, res) => {
 
   worksheet.addRows(allAgents);
 
-  const filename = `agents-${moment().format("MMM-Do-YY")}.xlsx`;
+  const filename = `agents-${moment().format("MMM-Do-YY-hh-mm-ss")}.xlsx`;
 
   workbook.xlsx
     .writeFile(filename)
@@ -92,7 +93,6 @@ const exportAgents = async (req, res) => {
 };
 
 const importAgents = (req, res) => {
-  console.log(req.filename);
   importExcelData(path.join(__dirname, "..", "/uploads/") + req.file.filename);
   res.status(200).json({
     msg: "File import successfull!",
@@ -112,7 +112,6 @@ function importExcelData(filePath) {
         },
 
         columnToKey: {
-          A: "_id",
           B: "name",
           C: "age",
           D: "experience",
@@ -126,10 +125,12 @@ function importExcelData(filePath) {
       },
     ],
   });
-
-  Agent.insertMany(excelData.Customers, (err, res) => {
-    if (err) res.status(400).json({ success: false });
-    res.status(200).json({ success: true });
+  Agent.insertMany(excelData.Agents, (err, res) => {
+    if (err) {
+      return { success: false };
+    }
+    console.log(res)
+    return { success: true };
   });
 
   fs.unlinkSync(filePath);
