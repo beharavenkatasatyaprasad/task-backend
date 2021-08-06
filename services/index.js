@@ -1,6 +1,6 @@
 const Agent = require("../models/agents");
 
-const createAgentService = async (query) => {
+const createAgentService = async (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       const agentInstance = new Agent(data);
@@ -13,4 +13,22 @@ const createAgentService = async (query) => {
   });
 };
 
-module.exports = { createAgentService };
+const updateAgentService = async (query, data) => {
+  return new Promise(async (resolve, reject) => {
+    Agent.findOneAndUpdate(
+      query,
+      { $set: data },
+      { new: true, useFindAndModify: false }
+    )
+      .then((resp_) => {
+        if (!resp_)
+          reject({
+            message: "Agent Not Found",
+          });
+        resolve(resp_);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+module.exports = { createAgentService, updateAgentService };
